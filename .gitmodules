@@ -1,0 +1,9 @@
+[submodule "nanochat"]
+	path = nanochat
+	url = git@github.com:karpathy/nanochat.git
+[submodule "examples"]
+	path = examples
+	url = git@github.com:LinuxGPU-VPS/examples.git
+[submodule "modded-nanogpt"]
+	path = modded-nanogpt
+	url = git@github.com:KellerJordan/modded-nanogpt.git
