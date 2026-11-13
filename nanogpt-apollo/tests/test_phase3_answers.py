@@ -144,13 +144,13 @@ def test_missing_or_invalid_metrics_are_unavailable(monkeypatch, capsys, metrics
     assert status["load_seconds"] is None and status["eval_count"] is None
     assert status["tokens_per_second"] is None
     print_answer_details(status)
-    assert "model load=unavailable" in capsys.readouterr().out
+    assert "ucitavanje modela=nedostupno" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("text,reason,expected", [
-    ("Tvrdnja [P99].", "stop", ["Unknown citations", "No valid passage citation"]),
-    ("Tvrdnja bez citata.", "stop", ["No valid passage citation"]),
-    ("Tvrdnja [P1].", "length", ["output token limit"]),
+    ("Tvrdnja [P99].", "stop", ["Nepoznate oznake izvora", "Odgovor nema vazecu oznaku odlomka"]),
+    ("Tvrdnja bez citata.", "stop", ["Odgovor nema vazecu oznaku odlomka"]),
+    ("Tvrdnja [P1].", "length", ["ogranicenje izlaznih tokena"]),
 ])
 def test_citation_and_cutoff_warnings(monkeypatch, text, reason, expected):
     mock_search(monkeypatch)
@@ -173,7 +173,7 @@ def test_failure_remains_explicit_even_after_partial_text(monkeypatch, content):
         status = ask("corpus", "index", "pravilo", client, on_text=emitted.append)
     assert status["complete"] is False and status["error"]
     assert "private-" not in status["error"]
-    assert any("partial, unverified" in warning for warning in status["warnings"])
+    assert any("delimican, neproveren" in warning for warning in status["warnings"])
     assert "thinking" not in status["text"]
 
 
@@ -187,12 +187,12 @@ def test_context_budget_is_utf8_includes_system_question_and_reserved_output(mon
     mock_search(monkeypatch, results)
     with Server().client() as client:
         status = ask("corpus", "index", "Pitanje č?", client)
-    assert any("2 of 3" in warning for warning in status["warnings"])
+    assert any("2 od 3" in warning for warning in status["warnings"])
 
 
 def test_context_budget_rejects_overflow_instead_of_cutting_evidence():
     for query, results in [("question", [passage(text="x" * 5000)]), ("č" * 3000, [passage()])]:
-        with pytest.raises(ValueError, match="shorten the question or prepare smaller passages"):
+        with pytest.raises(ValueError, match="skratite pitanje ili pripremite manje odlomke"):
             select_passages(query, results)
 
 
@@ -200,7 +200,7 @@ def test_empty_retrieval_does_not_generate(monkeypatch):
     mock_search(monkeypatch, [])
     server = Server()
     with server.client() as client:
-        with pytest.raises(ValueError, match="No passages found"):
+        with pytest.raises(ValueError, match="Nema odlomaka sa dokazima"):
             ask("corpus", "index", "question", client)
     assert server.requests == []
 
@@ -211,6 +211,6 @@ def test_source_output_maps_original_ranges_and_omits_missing_pages(monkeypatch,
         status = ask("corpus", "index", "question", client)
     print_answer_details(status)
     output = capsys.readouterr().out
-    assert "[P1] manual guide.txt:12-16 pages 2-3 id=original-chunk" in output
-    assert "[P2] source P_TEST.sql:12-16 id=source-id" in output
+    assert "[P1] prirucnik guide.txt:12-16 strane 2-3 id=original-chunk" in output
+    assert "[P2] izvorni kod P_TEST.sql:12-16 id=source-id" in output
     assert "None" not in output

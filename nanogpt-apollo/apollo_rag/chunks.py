@@ -53,10 +53,14 @@ def paragraphs(document):
         pending.clear()
 
     for line in lines:
+        # Keep a manual heading with the following body across blank/page breaks.
+        pending_heading = (document.kind == "manual" and len(pending) == 1
+                           and heading(pending[0].text))
         if not line.text.strip():
-            flush()
+            if not pending_heading:
+                flush()
             continue
-        if pending and line.page != pending[-1].page:
+        if pending and line.page != pending[-1].page and not pending_heading:
             flush()
         if heading(line.text):
             flush()

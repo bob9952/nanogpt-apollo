@@ -5,6 +5,13 @@ Chroma stores explicit E5 vectors; Ollama provides embeddings and streamed Qwen
 answers. The app validates the portable corpus and maps results back to its full
 passages, chunk IDs, paths, and line/page ranges. No model training is involved.
 
+The workflow is `prepare` (raw inputs to a corpus), `index` (corpus to Chroma),
+`search` (original source passages), then `ask` (a cited Serbian Latin answer).
+The accepted v3 corpus is already prepared, so skip `prepare` for the first run.
+`search` does not generate or translate an answer: English manual text remains
+English. `ask` instructs Qwen to answer in Serbian Latin while preserving form
+codes; this instruction still needs to be checked against its actual output.
+
 ## First run on the Linux server
 
 Run every command in this section on the Ubuntu server through PuTTY. Python 3.12
@@ -64,7 +71,8 @@ docker exec ollama ollama pull qllama/multilingual-e5-small:q8_0
 The app never downloads a model. Use the existing Ollama installation's command
 if its container has a different name. Keep the existing Qwen tag above installed.
 
-Start with the 388 manual passages and **one question**:
+Start with the 388 manual passages and **one question**. Run `index` only if the
+v3 collection has not already been indexed:
 
 ```bash
 docker compose run --rm assistant index --corpus /corpus --collection apollo-manuals --kind manual
@@ -72,10 +80,19 @@ docker compose run --rm assistant search "zasto nece da mi knjizi dokument, nije
 docker compose run --rm assistant ask "zasto nece da mi knjizi dokument, nije mi u ravnotezi, nije mi nasao konto zaliha za artikal 56?" --corpus /corpus --collection apollo-manuals --kind manual
 ```
 
+The first server search returned only manual section headings (guide lines 1694,
+2080, and 2646), so retrieval quality has not been established. The application
+now excludes manual passages whose complete text is only their section heading,
+in both semantic and literal rankings. It expands the candidate window when
+needed, using the same query vector. This filter works with the existing v3 bundle
+and collection: rebuild the assistant image and rerun the exact `search` and `ask`
+commands above; no preparation or reindexing is needed for this code update.
+
 Check the retrieved passages and answer citations against the manual. The stock
 account evidence is in guide lines 443-459: LIN001M001 provides warehouse/item-type
 defaults and LIT002M001 an item override. Balance status is separate evidence in
-lines 2252-2268. Retrieval of these passages still needs server verification. The answer
+lines 2252-2268. Filtering headings does not guarantee relevant E5 rankings;
+retrieval of these passages and answer quality still need server verification. The answer
 must distinguish a documented rule from the actual item-56 setting on a specific
 installation. Report any missing evidence instead of assuming the setting. Review
 retrieval time, first-answer time, and generation throughput printed by `ask`.
@@ -129,13 +146,26 @@ that a generated claim is supported. Read the referenced passages.
 
 ## Server-side preparation (optional for new inputs)
 
-The accepted v3 bundle is transferred as data only; it needs no preparation for
-first use. After initial v3 setup, prepare new inputs on the Ubuntu server. Put
-future raw input files in the already ignored `data/inputs/` directory, then run
-these commands from the application folder:
+Skip this section for the initial v3 run. Preparation requires the **raw UTF-8 TXT
+manuals**; the v3 bundle's chunks are not those input files. After initial v3
+setup, use WinSCP to copy both raw manuals into the ignored `data/inputs/`
+directory, preserving these exact names and capitalization:
+
+- `Apollo G4 ERP Users Guide v2.txt`
+- `specification of app english.txt`
+
+From the application folder on the Ubuntu server, confirm that both files are
+present before running `prepare`. If they are missing, transfer them first:
 
 ```bash
 mkdir -p data/inputs data/private .cache/huggingface
+ls -l data/inputs
+```
+
+Then prepare a new bundle. In the input mount below, the colon immediately follows
+`inputs`; do not add a slash or a Windows backslash before it:
+
+```bash
 docker compose run --rm \
   -v "$PWD/data/inputs:/inputs:ro" \
   -v "$PWD/data/private:/prepared" \
@@ -157,8 +187,11 @@ online run downloads public tokenizer files into the cache; use `--offline` only
 after those files are cached. This does not train a model. Research files in `docs/`
 remain background material and are not default corpus inputs.
 
-For the new bundle, set `APOLLO_CORPUS_DIR=./data/private/corpus-v4` in `.env` and
-index it into a new collection:
+New preparation keeps each manual heading with its following body across blank
+lines and page breaks, while retaining original source spans. This changes the
+prepared corpus. For the new bundle, set
+`APOLLO_CORPUS_DIR=./data/private/corpus-v4` in `.env` and index it into a new
+collection:
 
 ```bash
 docker compose run --rm assistant index --corpus /corpus --collection apollo-manuals-v4 --kind manual
@@ -167,19 +200,3 @@ docker compose run --rm assistant index --corpus /corpus --collection apollo-man
 No additional Compose services or configuration are needed. Read the prepared
 bundle's text for a quality check; no preparation test command is required.
 
-## Publishing the application
-
-From the repository root, stage only the application files listed below. Review
-the staged diff before committing and pushing yourself. Upstream submodules,
-`Network-Intelligence-Chat`, private data, and research documents are separate.
-
-```bash
-git status --short
-git add -- nanogpt-apollo/.gitignore nanogpt-apollo/.dockerignore nanogpt-apollo/.python-version nanogpt-apollo/.env.example nanogpt-apollo/Dockerfile nanogpt-apollo/compose.yaml nanogpt-apollo/pyproject.toml nanogpt-apollo/uv.lock nanogpt-apollo/README.md nanogpt-apollo/apollo_rag nanogpt-apollo/tests nanogpt-apollo/docs/verification.md
-git diff --cached --stat
-git diff --cached
-```
-
-No Git stage, commit, push, server connection, model pull, or service startup was
-performed during this migration. Current evidence and runtime limits are in
-[docs/verification.md](docs/verification.md).

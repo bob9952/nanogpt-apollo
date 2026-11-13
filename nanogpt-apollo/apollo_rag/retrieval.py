@@ -11,6 +11,12 @@ from .index import check_collection, check_kind, collection_settings
 from .ollama import ContextTooLong
 
 
+def manual_heading_only(chunk):
+    section = chunk.get("section")
+    return (chunk["kind"] == "manual" and bool(section)
+            and " ".join(chunk["text"].split()) == " ".join(section.split()))
+
+
 def reciprocal_ranks(vector_ids, literal_ids, *, constant=60):
     scores = {}
     for ranking in (vector_ids, literal_ids):
@@ -56,14 +62,22 @@ def search(corpus, collection, query, ollama, *, top_k=3, kind="both",
                 raise ValueError("Query exceeds the E5 context limit; shorten the query; truncation is disabled") from None
             if ollama.embedding_digest() != digest:
                 raise ValueError("E5 digest changed during search; retry with a stable model")
-            ranking = target.query(query_embeddings=[vector.tolist()],
-                                   where={"kind": kind} if kind != "both" else None,
-                                   n_results=min(max(100, top_k * 20), selected_count), include=["distances"])
-            vector_scores = {}
-            for identifier, distance in zip(ranking["ids"][0], ranking["distances"][0], strict=True):
-                if identifier not in expected or (kind != "both" and expected[identifier]["kind"] != kind):
-                    raise ValueError("Chroma returned an unexpected passage; index with a new --collection name")
-                vector_scores[identifier] = 1.0 - distance
+            candidate_count = min(max(100, top_k * 20), selected_count)
+            while True:
+                ranking = target.query(query_embeddings=[vector.tolist()],
+                                       where={"kind": kind} if kind != "both" else None,
+                                       n_results=candidate_count, include=["distances"])
+                vector_scores = {}
+                for identifier, distance in zip(ranking["ids"][0], ranking["distances"][0], strict=True):
+                    if identifier not in expected or (kind != "both" and expected[identifier]["kind"] != kind):
+                        raise ValueError("Chroma returned an unexpected passage; index with a new --collection name")
+                    if manual_heading_only(expected[identifier]):
+                        continue
+                    vector_scores[identifier] = 1.0 - distance
+                if len(vector_scores) >= top_k or candidate_count == selected_count:
+                    break
+                # Headings can fill the first candidate window in existing bundles.
+                candidate_count = min(candidate_count * 2, selected_count)
             # Literal Apollo identifiers supplement semantic retrieval without a
             # second index. Ordinary words and bare numbers stay semantic only.
             identifiers = {word.casefold() for word in re.findall(r"\w+", query)
@@ -72,7 +86,7 @@ def search(corpus, collection, query, ollama, *, top_k=3, kind="both",
             literal_hits = []
             if identifiers:
                 for identifier, chunk in expected.items():
-                    if kind != "both" and chunk["kind"] != kind:
+                    if (kind != "both" and chunk["kind"] != kind) or manual_heading_only(chunk):
                         continue
                     words = set(re.findall(r"\w+", (chunk["path"] + " " + chunk["text"]).casefold()))
                     matches = len(identifiers.intersection(words))
