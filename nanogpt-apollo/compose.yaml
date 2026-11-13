@@ -1,0 +1,31 @@
+services:
+  chroma:
+    image: chromadb/chroma:1.5.9
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${CHROMA_PORT:-8000}:8000"
+    volumes:
+      - chroma-data:/data
+    environment:
+      ANONYMIZED_TELEMETRY: "false"
+
+  assistant:
+    build: .
+    profiles: [cli]
+    network_mode: host
+    environment:
+      OLLAMA_URL: ${OLLAMA_URL:-http://127.0.0.1:11434}
+      CHROMA_HOST: ${CHROMA_HOST:-127.0.0.1}
+      CHROMA_PORT: ${CHROMA_PORT:-8000}
+      NO_PROXY: "*"
+      no_proxy: "*"
+    volumes:
+      - type: bind
+        source: ${APOLLO_CORPUS_DIR:-./data/private/corpus-v3}
+        target: /corpus
+        read_only: true
+        bind:
+          create_host_path: false
+
+volumes:
+  chroma-data:
