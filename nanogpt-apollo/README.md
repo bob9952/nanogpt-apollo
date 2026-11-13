@@ -7,6 +7,10 @@ passages, chunk IDs, paths, and line/page ranges. No model training is involved.
 
 ## First run on the Linux server
 
+Run every command in this section on the Ubuntu server through PuTTY. Python 3.12
+and the pinned dependencies are installed inside the Docker image; no host Python
+or `uv` installation is required.
+
 The Git repository is `bob9952/nanogpt-apollo`. Its root contains the application
 subfolder **`nanogpt-apollo/`**. From a parent directory:
 
@@ -123,26 +127,45 @@ existing Qwen request; omitted passages, missing/unknown citations, partial stre
 and generation cutoffs are reported. Citations identify evidence, but do not prove
 that a generated claim is supported. Read the referenced passages.
 
-## Local preparation and dependencies
+## Server-side preparation (optional for new inputs)
 
-Python 3.12 and pinned dependencies are recorded in `pyproject.toml` and `uv.lock`.
-From this application folder in PowerShell:
+The accepted v3 bundle is transferred as data only; it needs no preparation for
+first use. After initial v3 setup, prepare new inputs on the Ubuntu server. Put
+future raw input files in the already ignored `data/inputs/` directory, then run
+these commands from the application folder:
 
-```powershell
-$env:UV_CACHE_DIR = "$PWD\.cache\uv"
-$env:UV_PYTHON_INSTALL_DIR = "$PWD\.cache\python"
-uv sync --locked --python 3.12
-uv run --locked python -m apollo_rag --help
+```bash
+mkdir -p data/inputs data/private .cache/huggingface
+docker compose run --rm \
+  -v "$PWD/data/inputs:/inputs:ro" \
+  -v "$PWD/data/private:/prepared" \
+  -v "$PWD/.cache/huggingface:/tokenizer-cache" \
+  assistant prepare \
+  --manual '/inputs/Apollo G4 ERP Users Guide v2.txt' \
+  --manual '/inputs/specification of app english.txt' \
+  --output /prepared/corpus-v4 \
+  --tokenizer-cache /tokenizer-cache
 ```
 
-The accepted v3 bundle needs no preparation on the server. For new inputs, use
-`prepare --manual <UTF-8-file>` repeatedly, optional `--source-root <local-checkout>`,
-and a fresh `--output <directory-outside-source>`. See `prepare --help` for limits.
-Preparation keeps the source checkout read only, records local SVN provenance,
-uses the real E5 tokenizer with remote code disabled, and publishes a complete
-bundle only after a successful write. The first online preparation downloads
-public tokenizer files; `--offline` requires an existing cache. Existing research
-files in `docs/` are background material and are not default corpus inputs.
+The existing read-only v3 corpus bind remains required by Compose, so this optional
+preparation step is for use after the initial v3 setup. Choose a fresh output name
+that does not already exist; do not delete an existing corpus. For a supplied
+source export, add `--source-root /inputs/source-export`; it must be an exported
+directory because the server cannot access original Windows or UNC paths. If the
+export has no SVN metadata, that provenance is reported as unavailable. The first
+online run downloads public tokenizer files into the cache; use `--offline` only
+after those files are cached. This does not train a model. Research files in `docs/`
+remain background material and are not default corpus inputs.
+
+For the new bundle, set `APOLLO_CORPUS_DIR=./data/private/corpus-v4` in `.env` and
+index it into a new collection:
+
+```bash
+docker compose run --rm assistant index --corpus /corpus --collection apollo-manuals-v4 --kind manual
+```
+
+No additional Compose services or configuration are needed. Read the prepared
+bundle's text for a quality check; no preparation test command is required.
 
 ## Publishing the application
 
