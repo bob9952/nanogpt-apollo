@@ -96,8 +96,20 @@ retrieval of these passages and answer quality still need server verification. T
 must distinguish a documented rule from the actual item-56 setting on a specific
 installation. Report any missing evidence instead of assuming the setting. Review
 retrieval time, first-answer time, and generation throughput printed by `ask`.
-A ten-question comparison can follow after this first server question works;
-there is no automated evaluation command in this iteration.
+
+## Serbian manuals and model comparison
+
+Use the [server pilot](docs/serbian-pilot.md) to index the new private manuals
+and compare two local answer models against the same passages.
+
+## Serbian RAG evaluation
+
+On Ubuntu, run `bash scripts/run_rag_eval.sh retrieval` to compare the indexed corpora and rankers, or `bash scripts/run_rag_eval.sh answers` to generate answers on a small set. [Ubuntu evaluation runbook](docs/serbian-rag-evaluation.md)
+
+## Ministry of Finance opinions
+
+Use the [finance opinions pilot](docs/finance-opinions-pilot.md) for a separate
+PDV and e-invoicing collection from the pinned Serbia law submodule.
 
 ## Storage and retrieval
 
@@ -126,11 +138,13 @@ name**; the app never deletes or resets an existing collection. Run one indexer
 per collection at a time. Batches already stored survive an interrupted run;
 unfinished embedding requests can be repeated.
 
-Search validates the bundle hashes/identities and collection metadata before
-querying with an explicit `query: ` embedding. It combines Chroma semantic ranks
-with a small literal lookup for Apollo identifiers containing digits or underscores
-(such as `LIN001M001` and `WX_LIB2`). The literal lookup scans the already loaded
-corpus; it adds no second storage backend. A literal-only hit prints cosine `n/a`.
+Search validates the bundle hashes and collection metadata before querying
+Chroma with a `query: ` embedding. It prioritizes exact Apollo identifiers such
+as `LIN001M001` and `WX_LIB2`, then ranks by distinct matching keywords from the
+passage text. A small bilingual inventory glossary matches terms such as
+`konto` and `ledger`. Chroma rank breaks ties and supplies fallback candidates.
+Keyword matching scans the loaded corpus. Results outside the Chroma candidate
+window print cosine `n/a`.
 The default returns three whole passages. `--top-k` changes that count;
 `--kind manual|source|both` filters retrieval. A manual-only collection requires
 `--kind manual`. To include source later, index a new collection with `--kind both`.

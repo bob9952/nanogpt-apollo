@@ -7,3 +7,6 @@
 [submodule "modded-nanogpt"]
 	path = modded-nanogpt
 	url = git@github.com:KellerJordan/modded-nanogpt.git
+[submodule "serbia-law"]
+	path = serbia-law
+	url = https://github.com/lexifina/serbia-law.git
