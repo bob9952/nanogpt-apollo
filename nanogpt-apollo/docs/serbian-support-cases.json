@@ -1,0 +1,444 @@
+[
+  {
+    "id": "Q01",
+    "domain": "accounting",
+    "query": "Na kojem kontu se knjize prihodi i kako se knjizi jedna izlazna faktura?",
+    "review": "Proveriti odvojeno vrstu prihoda, potraživanje i PDV, kada se primenjuje. Tražiti tip prodaje i usvojene analitike pre navođenja tačnog konta u Apolu.",
+    "evidence": [
+      [
+        "PRAVILNIK O KONTNOM OKVIRU.txt",
+        145,
+        150
+      ],
+      [
+        "PRAVILNIK O KONTNOM OKVIRU.txt",
+        343,
+        345
+      ],
+      [
+        "PRAVILNIK O KONTNOM OKVIRU.txt",
+        452,
+        466
+      ]
+    ]
+  },
+  {
+    "id": "Q02",
+    "domain": "accounting",
+    "query": "Na kojim kontima bi se knjizila ulazna faktura.",
+    "review": "Tražiti šta je nabavljeno, da li se radi o trošku, zalihama ili sredstvu i kakav je PDV tretman. Dobavljač i prethodni PDV imaju izvor, ali nema univerzalnog konta rashoda ili zaliha.",
+    "evidence": [
+      [
+        "PRAVILNIK O KONTNOM OKVIRU.txt",
+        204,
+        209
+      ],
+      [
+        "PRAVILNIK O KONTNOM OKVIRU.txt",
+        304,
+        310
+      ]
+    ]
+  },
+  {
+    "id": "Q03",
+    "domain": "apollo",
+    "query": "Dokument mi nije u ravnotezi za 0.01 din gde da trazim gresku? Sta da radim ?",
+    "review": "Tražiti tip dokumenta i finansijske stavke. U primeru zavisnih troškova proveriti raspodelu i zaokruživanje na bloku Parametri. Ne preporučivati korekciju bez utvrđivanja uzroka.",
+    "evidence": [
+      [
+        "Nabavka_dokumentacija v1.2.pdf.txt",
+        1270,
+        1273
+      ]
+    ],
+    "reference_answer": "Ako je dokument za zavisne troškove prijemnice, uputstvo upućuje na obračun raspodele i korekciju na bloku Parametri kada je uzrok zaokruživanje. Za vaš dokument najpre treba proveriti tip dokumenta i razliku na finansijskim stavkama."
+  },
+  {
+    "id": "Q04",
+    "domain": "apollo",
+    "query": "Sta ako imam na jednoj fakturi artikle koji pripdaju razlitioj poreskoj grupi? Koji dokument pravim ? Koje su mi opcije ?",
+    "review": "Pozvati se na poreske tarife po artiklu i način određivanja stope. Tražiti tip fakture i model dokumenta. Poreske grupe same ne određuju koji dokument treba napraviti.",
+    "evidence": [
+      [
+        "Lovcen Auto v1.0.pdf.txt",
+        1244,
+        1248
+      ]
+    ]
+  },
+  {
+    "id": "Q05",
+    "domain": "sef",
+    "query": "Kako da posaljem e fakturu. Nisam koristio, zelim da me uputis.",
+    "review": "Pitati da li korisnik šalje iz Apola ili portala SEF. Tražiti uputstvo za odgovarajuću verziju i razlikovati kreiranje, slanje i potvrdu statusa."
+  },
+  {
+    "id": "Q06",
+    "domain": "apollo",
+    "query": "gde vidim koliko mi kupac duguje?",
+    "review": "Pronaći zbirni prikaz salda kupca ili otvorene stavke. Objasniti izbor partnera i perioda bez izmišljanja stvarnog iznosa.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        6002,
+        6004
+      ],
+      [
+        "cela dokumentacija.txt",
+        4905,
+        4911
+      ]
+    ]
+  },
+  {
+    "id": "Q07",
+    "domain": "apollo",
+    "query": "Како да видим ком добављачу још нисам платио?",
+    "review": "Pronaći otvorene stavke i izbor partnera i konta. Proveriti može li se u dokumentovanom prikazu izlistati više dobavljača. Ne iznositi stvarna dugovanja.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        4905,
+        4911
+      ]
+    ]
+  },
+  {
+    "id": "Q08",
+    "domain": "apollo",
+    "query": "gde mogu da nadjem fakturu ako znam samo broj?",
+    "review": "Pronaći filter koji sadrži broj i tip dokumenta. Objasniti da broj sam može biti nedovoljan bez tipa, fiskalne godine ili O.J. Prikaz robnih stavki je dokumentovan primer.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        2472,
+        2478
+      ]
+    ]
+  },
+  {
+    "id": "Q09",
+    "domain": "apollo",
+    "query": "Како да одштампам картицу купца за прошли месец?",
+    "review": "Pronaći analitičku karticu partnera, parametre i PDF/štampu. Period i partner se zadaju kao parametri ako ih izabrani izveštaj podržava.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        5996,
+        6008
+      ]
+    ]
+  },
+  {
+    "id": "Q10",
+    "domain": "apollo",
+    "query": "sta znaci da je faktura otvorena?",
+    "review": "Razjasniti da li se misli na otvorenu finansijsku stavku ili na status dokumenta u procesu. Za finansijsko značenje proveriti uplate i vezivanje stavki.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        4901,
+        4911
+      ]
+    ]
+  },
+  {
+    "id": "Q11",
+    "domain": "apollo",
+    "query": "Како да проверим да ли је фактура прокњижена?",
+    "review": "Tražiti tip dokumenta i verziju Apola. Proveriti status ili finansijski nalog gde postoji izvor. Samo postojanje dokumenta ili veze u pripremi nije dokaz knjiženja."
+  },
+  {
+    "id": "Q12",
+    "domain": "apollo",
+    "query": "uneo sam pogresan datum na fakturi, kako da ga promenim?",
+    "review": "Uputstvo opisuje izmenu predloženog datuma pri unosu. Za već sačuvanu, poslatu ili knjiženu fakturu prvo utvrditi status i dozvoljeni postupak.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        961,
+        964
+      ]
+    ]
+  },
+  {
+    "id": "Q13",
+    "domain": "apollo",
+    "query": "Где се уноси извод из банке?",
+    "review": "Navesti formu CDC006M200 i dokumentovanu putanju Finansije → Izvodi. Ime banke iz primera ne prenositi kao univerzalno.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        5924,
+        5929
+      ]
+    ],
+    "reference_answer": "U dokumentovanoj instalaciji bankarski izvod se unosi u formi CDC006M200, u meniju Finansije → Izvodi. U meniju izaberite odgovarajuću banku ako je prikaz organizovan po bankama."
+  },
+  {
+    "id": "Q14",
+    "domain": "apollo",
+    "query": "kupac mi je platio samo pola racuna, kako to da unesem?",
+    "review": "Razdvojiti unos uplate od finansijskog povezivanja sa fakturom. U dokumentovanom primeru manja uplata deli stavku fakture i zatvara samo odgovarajući deo.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        4922,
+        4930
+      ],
+      [
+        "cela dokumentacija.txt",
+        4935,
+        4938
+      ]
+    ]
+  },
+  {
+    "id": "Q15",
+    "domain": "accounting",
+    "query": "Шта је авансна фактура и када је правим?",
+    "review": "Tražiti datum i kontekst avansa, kao i važeći izvor ako se traži obaveza izdavanja. Kontni okvir može dati kontekst za evidenciju primljenog avansa."
+  },
+  {
+    "id": "Q16",
+    "domain": "apollo",
+    "query": "sta znaci storno fakture?",
+    "review": "Objasniti dokumentovanu ulogu storno dokumenta bez univerzalnog ERP ili SEF postupka. Za korake tražiti vrstu dokumenta i status.",
+    "evidence": [
+      [
+        "Lovcen Auto v1.0.pdf.txt",
+        1643,
+        1646
+      ]
+    ]
+  },
+  {
+    "id": "Q17",
+    "domain": "apollo",
+    "query": "gde da vidim koliko imam robe na stanju?",
+    "review": "Pronaći prikaz stanja artikala i objasniti da se stanje može filtrirati po artiklu ili O.J. Ne navoditi stvarnu količinu.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        2380,
+        2387
+      ]
+    ]
+  },
+  {
+    "id": "Q18",
+    "domain": "apollo",
+    "query": "Како да видим стање једног артикла по магацинима?",
+    "review": "Pronaći LIN003D001, organizacione jedinice i količine. Razlikovati stanje od robne kartice i lokacija.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        2380,
+        2387
+      ],
+      [
+        "cela dokumentacija.txt",
+        2394,
+        2399
+      ]
+    ],
+    "reference_answer": "U formi LIN003D001 – Prikaz stanja artikala pronađite artikal i pregledajte organizacione jedinice. Prvi blok prikazuje stanje po artiklu, organizacionoj jedinici, datumu važnosti i partneru čije su zalihe."
+  },
+  {
+    "id": "Q19",
+    "domain": "apollo",
+    "query": "како се уноси нови артикал?",
+    "review": "Pronaći LIT002M001 i dokumentovana osnovna polja. Ne tvrditi da su sva ponuđena polja obavezna za svaku instalaciju.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        2338,
+        2339
+      ],
+      [
+        "cela dokumentacija.txt",
+        2349,
+        2356
+      ]
+    ]
+  },
+  {
+    "id": "Q20",
+    "domain": "apollo",
+    "query": "stigla mi je roba od dobavljaca, kako da napravim prijemnicu?",
+    "review": "Pronaći dokumentovani tok nabavke i prijemnicu P05 gde se taj model koristi. Tražiti podatak postoji li prethodna porudžbenica.",
+    "evidence": [
+      [
+        "cela dokumentacija.txt",
+        2530,
+        2537
+      ]
+    ]
+  },
+  {
+    "id": "Q21",
+    "domain": "apollo",
+    "query": "Која је разлика између пријемнице и отпремнице?",
+    "review": "Razlikovati prijem robe i izlaz robe. Odvojiti kretanje robe od knjiženja finansijskih stavki.",
+    "evidence": [
+      [
+        "Lovcen Auto v1.0.pdf.txt",
+        1684,
+        1689
+      ]
+    ]
+  },
+  {
+    "id": "Q22",
+    "domain": "apollo",
+    "query": "kako da prebacim robu iz jednog magacina u drugi?",
+    "review": "Pronaći međumagacinski proces I01/I02 iz G4 vodiča. Razlikovati ga od preseljenja između lokacija.",
+    "evidence": [
+      [
+        "Apollo G4 ERP Users Guide v2.txt",
+        2143,
+        2148
+      ]
+    ],
+    "reference_answer": "G4 vodič za međumagacinski prenos navodi nalog za prenos I01 i dokument prenosa robe I02. Zasebno opisuje prenos između lokacija kao I02. Proverite koji se model koristi u vašoj instalaciji."
+  },
+  {
+    "id": "Q23",
+    "domain": "apollo",
+    "query": "Треба ми лагер листа на крају прошлог месеца. Где је налазим?",
+    "review": "Tražiti izveštaj sa presekom na datum. Trenutno stanje nije dokaz istorijskog stanja. Ako nema dokumentovanog izveštaja tražiti instalaciju i dostupne izveštaje."
+  },
+  {
+    "id": "Q24",
+    "domain": "apollo",
+    "query": "kupac mi je vratio jedan artikal, koji dokument pravim?",
+    "review": "Prvo razlikovati povrat od kupca od povrata dobavljaču. Tražiti originalnu prodaju i dokumentovani model povrata za instalaciju. Ne preuzimati P06/P07 iz nabavke."
+  },
+  {
+    "id": "Q25",
+    "domain": "apollo",
+    "query": "Како да издам материјал из магацина за производњу?",
+    "review": "Tražiti uputstvo za proizvodnju, radni nalog i model magacinskog izdavanja. Obična otpremnica nije dokaz ispravnog procesa."
+  },
+  {
+    "id": "Q26",
+    "domain": "apollo",
+    "query": "na popisu imam jedan komad vise nego u programu, sta da radim?",
+    "review": "Proveriti ponovljeno brojanje i popisnu listu. Pronaći dokumentovani redosled popisa i korekcije. Ne preporučivati direktnu izmenu stanja.",
+    "evidence": [
+      [
+        "Apollo G4 ERP Users Guide v2.txt",
+        2150,
+        2155
+      ]
+    ]
+  },
+  {
+    "id": "Q27",
+    "domain": "sef",
+    "query": "Где у Апoлу видим е-фактуре које сам примио?",
+    "review": "Tražiti Apollo verziju, instalaciju i interno uputstvo za ulazne e-fakture. Portal SEF i Apollo integracija mogu imati različite putanje."
+  },
+  {
+    "id": "Q28",
+    "domain": "sef",
+    "query": "kako da znam da li je kupac prihvatio fakturu na sef-u?",
+    "review": "Tražiti verziju portala ili integracije i dokumentovanu proveru statusa. Ne potvrđivati stvarni status fakture."
+  },
+  {
+    "id": "Q29",
+    "domain": "sef",
+    "query": "ne vidim dugme za slanje e fakture, sta prvo da proverim?",
+    "review": "Tražiti Apollo verziju, ekran, tip i status dokumenta, integraciju i korisnička prava. Bez izvora ne navoditi tačno dugme ni uzrok."
+  },
+  {
+    "id": "Q30",
+    "domain": "sef",
+    "query": "Како да потврдим да је роба стигла кад добијем еОтпремницу?",
+    "review": "Zahtevati odgovarajuće uputstvo za eOtpremnicu i verziju integracije. Odvojiti potvrdu prijema od običnog magacinskog prijema ili e-fakture."
+  },
+  {
+    "id": "ITEM-56",
+    "domain": "apollo",
+    "query": "Zašto ne mogu da knjižim dokument? Dokument nije u ravnoteži i sistem nije našao konto zaliha za artikal 56. Šta da proverim?",
+    "review": "Oceniti oba simptoma zasebno. Kada se primenjuje dokumentovano pravilo i konto nije zadat, proveriti stanje za artikal, O.J., datum važnosti i partnera. Ako stanje nedostaje, proveriti LIN001M001 po magacinu i tipu artikla. Za neravnotežu uporediti dugovnu i potražnu stranu i tražiti tip dokumenta i finansijske stavke. Ne pretpostavljati firmu, stvarno podešavanje, broj konta ili vezu između simptoma.",
+    "evidence": [
+      [
+        "Lovcen Auto v1.0.pdf.txt",
+        1733,
+        1738
+      ],
+      [
+        "Apollo G4 ERP Users Guide v2.txt",
+        443,
+        457
+      ],
+      [
+        "Apollo G4 ERP Users Guide v2.txt",
+        2260,
+        2261
+      ]
+    ],
+    "evidence_alternatives": [
+      [["Apollo G4 ERP Users Guide v2.txt", 1272, 1278]],
+      [],
+      []
+    ],
+    "evidence_notes": [
+      "Konto na postojećem stanju artikla. U dokumentovanom pravilu formiranja finansijske stavke, ako je polje Konto prazno, sistem traži konto na stanju magacina po artiklu, O.J., datumu važnosti i partneru. Ako stanje ne postoji, sistem ga otvara prema podrazumevanom kontu iz LIN001M001. Ako ni tamo nema konta, sistem daje upozorenje.",
+      "Apollo G4 — podrazumevani konto u LIN001M001. Pravilo se podešava po magacinu (O.J.) i tipu artikla. Polja su magacin, tip artikla i konto zaliha. Poseban konto za pojedinačni artikal može se podesiti u LIT002M001.",
+      "Finansijska ravnoteža dokumenta. G4 vodič opisuje status Incorrect za dokument kod kojeg dugovna i potražna strana nisu jednake."
+    ],
+    "reference_answer": "Konto zaliha: proverite da li je konto zadat u pravilu knjiženja. Ako vaša instalacija koristi dokumentovano pravilo za prazno polje Konto, proverite konto stanja za artikal 56, magacin/O.J., datum važnosti i partnera. Ako stanje nedostaje, proverite podrazumevani konto u LIN001M001 po magacinu i tipu artikla. Neravnoteža: uporedite dugovnu i potražnu stranu i pošaljite tip dokumenta i finansijske stavke sa iznosima. Ti podaci su potrebni da se utvrdi uzrok razlike i eventualna veza sa kontom zaliha.",
+    "focus": [
+      "Gde se proverava konto zaliha artikla i podrazumevano konto magacina?",
+      "Neravnoteža dokumenta pri knjiženju: provera dugovnih i potražnih finansijskih stavki."
+    ]
+  },
+  {
+    "id": "STOCK-DEFAULTS",
+    "domain": "apollo",
+    "query": "Gde se podešava podrazumevano konto zaliha za magacin i tip artikla, a gde izuzetak za artikal?",
+    "review": "Razlikovati LIN001M001 od LIT002M001. Navesti izvore za obe funkcije.",
+    "evidence": [
+      [
+        "Apollo G4 ERP Users Guide v2.txt",
+        443,
+        457
+      ],
+      [
+        "Apollo G4 ERP Users Guide v2.txt",
+        574,
+        585
+      ]
+    ],
+    "reference_answer": "Podrazumevani konto za kombinaciju magacina i tipa artikla podešava se u LIN001M001. Poseban konto za pojedinačni artikal podešava se u LIT002M001 na odgovarajućem stanju artikla."
+  },
+  {
+    "id": "FDC-EXACT",
+    "domain": "apollo",
+    "query": "Šta se dešava kad u FDC001M001 ostavim konto prazno?",
+    "review": "Naći precizno pravilo za finansijsku stavku u uputstvu za Lovcen.",
+    "evidence": [
+      [
+        "Lovcen Auto v1.0.pdf.txt",
+        1733,
+        1738
+      ]
+    ],
+    "reference_answer": "U dokumentovanom Lovcen modelu, blanko konto za finansijsku stavku znači da se koristi konto stanja za kombinaciju artikla, O.J., datuma važnosti i partnera. Ako stanje ne postoji, sistem ga otvara prema podrazumevanom kontu iz LIN001M001 i upozorava ako podrazumevano konto nedostaje."
+  },
+  {
+    "id": "LIVE-ACCOUNT",
+    "domain": "apollo",
+    "query": "Koji je stvarni broj konta zaliha za artikal 56 u mom magacinu?",
+    "review": "Tražiti O.J. i stvarno stanje ili konfiguraciju. Ne navoditi broj jer nema pristupa instalaciji."
+  },
+  {
+    "id": "OUT-OF-SCOPE",
+    "domain": "other",
+    "query": "Koliko pomorandži stane u Citroën C3?",
+    "review": "Prepoznati pitanje van domena Apola i ne koristiti nevezane ERP odlomke kao dokaz."
+  }
+]

@@ -32,7 +32,7 @@ def normalized_vector(value):
 
 
 class Ollama:
-    def __init__(self, endpoint=DEFAULT_URL, *, transport=None):
+    def __init__(self, endpoint=DEFAULT_URL, *, chat_model=CHAT_MODEL, num_predict=NUM_PREDICT, transport=None):
         try:
             url = urlsplit(endpoint)
             valid = (url.scheme in {"http", "https"} and url.hostname and url.port != 0
@@ -42,7 +42,11 @@ class Ollama:
             valid = False
         if not valid:
             raise ValueError("Use an http(s) Ollama root URL without credentials, query, or path")
+        if type(num_predict) is not int or not 1 <= num_predict < NUM_CTX:
+            raise ValueError(f"--num-predict must be between 1 and {NUM_CTX - 1} tokens")
         # Explicit endpoint only: never send proprietary text through an env proxy.
+        self.chat_model = chat_model
+        self.num_predict = num_predict
         self.client = httpx.Client(base_url=endpoint.rstrip("/"), timeout=httpx.Timeout(120, connect=3),
                                    trust_env=False, transport=transport)
 
@@ -82,6 +86,8 @@ class Ollama:
         for record in records:
             if not isinstance(record, dict):
                 raise RuntimeError("Ollama model inventory is invalid; check the server version")
+            if record.get("remote_host") or record.get("remote_model"):
+                continue
             name, digest = record.get("name", record.get("model")), record.get("digest")
             if isinstance(name, str) and isinstance(digest, str) and digest:
                 result[name] = digest
@@ -98,10 +104,11 @@ class Ollama:
         if not isinstance(version, str) or not version:
             raise RuntimeError("Ollama version response is invalid; check the server version")
         models = self.models()
-        missing = [name for name in (CHAT_MODEL, EMBED_MODEL) if name not in models]
+        required = (self.chat_model, EMBED_MODEL)
+        missing = [name for name in required if name not in models]
         if missing:
             raise RuntimeError("Required Ollama model missing; install explicitly: " + ", ".join(missing))
-        return {"version": version, "models": {name: models[name] for name in (CHAT_MODEL, EMBED_MODEL)}}
+        return {"version": version, "models": {name: models[name] for name in required}}
 
     def embed(self, texts):
         result = self.request("POST", "/api/embed", {
@@ -114,10 +121,10 @@ class Ollama:
     def generate(self, prompt, system):
         """Yield validated NDJSON records; never expose server bodies in errors."""
         payload = {
-            "model": CHAT_MODEL, "prompt": prompt, "system": system,
+            "model": self.chat_model, "prompt": prompt, "system": system,
             "think": False, "stream": True, "keep_alive": "30m",
             "options": {"temperature": 0, "num_ctx": NUM_CTX,
-                        "num_thread": 8, "num_predict": NUM_PREDICT},
+                        "num_thread": 8, "num_predict": self.num_predict},
         }
         done = False
         line_number = 0

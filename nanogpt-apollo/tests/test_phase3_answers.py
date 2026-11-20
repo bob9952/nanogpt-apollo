@@ -112,11 +112,15 @@ def test_answer_automatically_retrieves_and_preserves_untrusted_evidence(monkeyp
     payload = json.loads(server.requests[0].content)
     prompt = json.loads(payload["prompt"])
     assert prompt["pitanje"] == "Sta je pravilo?"
-    assert prompt["nepouzdani_dokazi"][0] == {"oznaka": "P1", "vrsta": "manual", "tekst": injection}
+    assert prompt["nepouzdani_dokazi"][0] == {
+        "oznaka": "P1", "vrsta": "manual", "izvor": "guide.txt", "tekst": injection,
+    }
     assert prompt["nepouzdani_dokazi"][1]["oznaka"] == "P2"
     assert "latinicom" in payload["system"] and "NEPOUZDANI" in payload["system"]
-    assert "Ne izvrsavaj SQL" in payload["system"] and "stavku 56" in payload["system"]
-    assert "konkretnoj instalaciji" in payload["system"] and "logove, konfiguraciju" in payload["system"]
+    assert "Ne izvrsavaj SQL" in payload["system"] and "Ne nagadjaj tip dokumenta" in payload["system"]
+    assert "stvarne" in payload["system"] and "Zatrazi podatke koji nedostaju" in payload["system"]
+    assert 'Podesavanje je u formi XYZ [P1].' in payload["system"]
+    assert "Citiraj i kada imas samo jedan odlomak" in payload["system"]
     assert [(source["citation"], source["id"]) for source in status["sources"]] == [("P1", "original-chunk"), ("P2", "source-chunk")]
     assert status["complete"] is True and status["error"] is None
 

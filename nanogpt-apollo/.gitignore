@@ -28,6 +28,9 @@ chroma_db/
 *.bin
 *.safetensors
 *.onnx
+docs/apollo-expanded-v6/
+docs/*.doc
+docs/*.docx
 docs/*.pdf
 docs/*.txt
 docs/*.tar
